@@ -4,8 +4,6 @@
     <p style="color:red"><?php echo $pageData['error2']; ?></p>
 <?php endif; ?>
 
-<link rel="stylesheet" href="../../css/login_register.css">
-
 <div class="container table-block">
     <div class="row table-cell-block">
         <form action="" class="form-signin" method="post" novalidate="novalidate">

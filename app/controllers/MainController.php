@@ -60,16 +60,20 @@ class MainController extends Controller
     // определяем страницу & кол-во task'ов которое будет выведено
     public function makeTaskPager($num, $totalPages)
     {
+        //если страница не указана или минусовая :
         if (!isset($_GET['page']) || (int)$_GET['page'] <= 1) {
             $pageNumber = 1;
             $limit = 0;//leftlimit
             $offset = $this->taskPerPage;//rightlimit
-        } elseif ((int)($_GET['page']) > $totalPages || (int)($_GET['page']) == $totalPages) {
+        }
+        //если страница больше общего кол-ва или равняется ему :
+        elseif ((int)($_GET['page']) > $totalPages || (int)($_GET['page']) == $totalPages) {
             $pageNumber = $totalPages;
             $limit = $this->taskPerPage * ($pageNumber - 1);//leftlimit
             $offset = $num;//rightlimit
 
-        } else {
+        }
+        else {
             $pageNumber = (int)$_GET['page'];
             $limit = $this->taskPerPage * ($pageNumber - 1);//leftlimit
             $offset = $this->taskPerPage;//rightlimit
@@ -77,7 +81,7 @@ class MainController extends Controller
 
         $page_item = array(
             'pageNumber' => $pageNumber,//для гет запроса
-            'totalPages' => $totalPages,
+            'totalPages' => $totalPages,//для пагинации
             'limit' => $limit,
             'offset' => $offset
         );
@@ -102,12 +106,7 @@ class MainController extends Controller
         $pages = $this->makeTaskPager($num, $totalPages);
         $limit = (int)$pages['limit'];
         $offset = (int)$pages['offset'];
-
-        //пагинация
-        $pagination = $this->utils->drawPager($num, $this->taskPerPage);
-        $this->pageData['pagination'] = $pagination;
-
-
+        
         // получаем tasks sort by username ASC
         $result = $this->model->sortByUsernameWithLimitASC($limit, $offset);
         //кол-во результатов
@@ -154,10 +153,6 @@ class MainController extends Controller
         $limit = (int)$pages['limit'];
         $offset = (int)$pages['offset'];
 
-        //пагинация
-        $pagination = $this->utils->drawPager($num, $this->taskPerPage);
-        $this->pageData['pagination'] = $pagination;
-
         // получаем tasks sort by username ASC
         $result = $this->model->sortByUsernameWithLimitDESC($limit, $offset);
         //кол-во результатов
@@ -198,10 +193,6 @@ class MainController extends Controller
         $num = $allResult->rowCount();
         //кол-во страниц
         $totalPages = ceil($num / $this->taskPerPage);
-
-        //пагинация
-        $pagination = $this->utils->drawPager($num, $this->taskPerPage);
-        $this->pageData['pagination'] = $pagination;
 
         // определяем страницу & кол-во task'ов которое будет выведено
         $pages = $this->makeTaskPager($num, $totalPages);
@@ -249,10 +240,6 @@ class MainController extends Controller
         //кол-во страниц
         $totalPages = ceil($num / $this->taskPerPage);
 
-        //пагинация
-        $pagination = $this->utils->drawPager($num, $this->taskPerPage);
-        $this->pageData['pagination'] = $pagination;
-
         // определяем страницу & кол-во task'ов которое будет выведено
         $pages = $this->makeTaskPager($num, $totalPages);
         $limit = (int)$pages['limit'];
@@ -299,10 +286,6 @@ class MainController extends Controller
         //кол-во страниц
         $totalPages = ceil($num / $this->taskPerPage);
 
-        //пагинация
-        $pagination = $this->utils->drawPager($num, $this->taskPerPage);
-        $this->pageData['pagination'] = $pagination;
-
         // определяем страницу & кол-во task'ов которое будет выведено
         $pages = $this->makeTaskPager($num, $totalPages);
         $limit = (int)$pages['limit'];
@@ -348,10 +331,6 @@ class MainController extends Controller
         $num = $allResult->rowCount();
         //кол-во страниц
         $totalPages = ceil($num / $this->taskPerPage);
-
-        //пагинация
-        $pagination = $this->utils->drawPager($num, $this->taskPerPage);
-        $this->pageData['pagination'] = $pagination;
 
         // определяем страницу & кол-во task'ов которое будет выведено
         $pages = $this->makeTaskPager($num, $totalPages);
