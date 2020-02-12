@@ -6,7 +6,6 @@ class UpdateController extends Controller
     {
         parent::__construct();
         $this->model = new UpdateModel();
-        $this->security = new Security() ;
     }
 
     public function index()
@@ -71,37 +70,40 @@ class UpdateController extends Controller
     {
 
         //проверяем права доступа
-        $this->security->securityChecker();
+        if (isset($_SESSION['admin']))
+        {
+            $id = (int)$_POST['task_id'];
+            $body_posted = $_POST['body'];
 
+            //преобразуем статус
+            switch ($_POST['status']){
+                case $_POST['status'] === 'Не выполнено':
+                    $status = 0;
+                    break;
+                case $_POST['status'] === 'Выполнено':
+                    $status = 1;
+                    break;
+            }
 
-        $id = (int)$_POST['task_id'];
-        $body_posted = $_POST['body'];
+            //check if body was changed
+            $db_body = $this->checkingBodyInDB();
 
-        //преобразуем статус
-        switch ($_POST['status']){
-            case $_POST['status'] === 'Не выполнено':
-                $status = 0;
-                break;
-            case $_POST['status'] === 'Выполнено':
-                $status = 1;
-                break;
-        }
+            //check if body was changed
+            if ($body_posted !== $db_body){
+                //тело задчи изменено
+                $body = $body_posted;
+                $this->model->update($id, $body, $status);
+            }
+            else{
+                //тело задчи без изменений
+                $this->model->updateWithOutBody($id, $status);
+            }
 
-        //check if body was changed
-        $db_body = $this->checkingBodyInDB();
-
-        //check if body was changed
-        if ($body_posted !== $db_body){
-            //тело задчи изменено
-            $body = $body_posted;
-            $this->model->update($id, $body, $status);
+            header('Location:/');
         }
         else{
-            //тело задчи без изменений
-            $this->model->updateWithOutBody($id, $status);
+            header('Location:/');
         }
-
-        header('Location:/');
 
     }
 

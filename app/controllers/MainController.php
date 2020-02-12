@@ -15,42 +15,51 @@ class MainController extends Controller
     public function index()
     {
         //сортировка по дефолту
-        $sort_option = 'ASC';
+        $sort_variant = 'ASC';
+        $sort_column = 'u.login';
         $sort = array(
-            'sortByUser' => 'sortByUsernameASC',
-            'sortByEmail' => 'sortByEmailASC',
-            'sortByStatus' => 'sortByStatusASC',
+            'sortByUser' => 'sortByUsernameDESC',
+            'sortByEmail' => 'sortByEmailDESC',
+            'sortByStatus' => 'sortByStatusDESC',
         );
         $this->pageData['sortoption'] = $sort;
 
+
+
         if (!isset($_GET['sort'])) {
-            $this->sortByUsernameWithLimit($sort_option);
+            $this->sortByColumnWithLimit($sort_variant, $sort_column);
         } else {
             // меняем сортировку в кнопках & выводим отсортированные данные
             switch (isset($_GET['sort'])):
                 case $_GET['sort'] === 'sortByUsernameASC':
+
                     $this->pageData['sortoption']['sortByUser'] = 'sortByUsernameDESC';
-                    $this->sortByUsernameWithLimit($sort_option);
+                    $this->sortByColumnWithLimit($sort_variant, $sort_column);
                     break;
                 case $_GET['sort'] === 'sortByUsernameDESC':
+
                     $this->pageData['sortoption']['sortByUser'] = 'sortByUsernameASC';
-                    $this->sortByUsernameWithLimit($sort_option = 'DESC');
+                    $this->sortByColumnWithLimit($sort_variant = 'DESC', $sort_column);
                     break;
                 case $_GET['sort'] === 'sortByEmailASC':
+
                     $this->pageData['sortoption']['sortByEmail'] = 'sortByEmailDESC';
-                    $this->sortByEmailWithLimit($sort_option);
+                    $this->sortByColumnWithLimit($sort_variant, $sort_column = 'u.email');
                     break;
                 case $_GET['sort'] === 'sortByEmailDESC':
+
                     $this->pageData['sortoption']['sortByEmail'] = 'sortByEmailASC';
-                    $this->sortByEmailWithLimit($sort_option = 'DESC');
+                    $this->sortByColumnWithLimit($sort_variant = 'DESC', $sort_column = 'u.email');
                     break;
                 case $_GET['sort'] === 'sortByStatusASC':
+
                     $this->pageData['sortoption']['sortByStatus'] = 'sortByStatusDESC';
-                    $this->sortByStatusWithLimit($sort_option);
+                    $this->sortByColumnWithLimit($sort_variant, $sort_column = 't.status');
                     break;
                 case $_GET['sort'] === 'sortByStatusDESC':
+
                     $this->pageData['sortoption']['sortByStatus'] = 'sortByStatusASC';
-                    $this->sortByStatusWithLimit($sort_option = 'DESC');
+                    $this->sortByColumnWithLimit($sort_variant = 'DESC', $sort_column = 't.status');
                     break;
             endswitch;
         }
@@ -78,21 +87,19 @@ class MainController extends Controller
             $offset = $this->taskPerPage;//rightlimit
         }
 
-        $page_item = array(
-            'pageNumber' => $pageNumber,//для гет запроса
-            'totalPages' => $totalPages,//для пагинации
+        $limits = array(
             'limit' => $limit,
             'offset' => $offset
         );
 
         // для пагинатора во view
-        $this->pageData['limitPages'] = $page_item;
+        $this->pageData['totalPages'] = $totalPages;
 
         // возвращаем данные для методов сортировки
-        return $page_item;
+        return $limits;
     }
 
-    public function sortByUsernameWithLimit($sort_option)
+    public function sortByColumnWithLimit($sort_variant, $sort_column)
     {
         //кол-во результатов
         $num = $this->model->countOfTasks();
@@ -105,61 +112,15 @@ class MainController extends Controller
         $offset = (int)$pages['offset'];
 
         // получаем tasks sort by username ASC
-        $result = $this->model->sortByUsernameWithLimit($limit, $offset, $sort_option);
+        $result = $this->model->sortByColumnWithLimit($limit, $offset, $sort_variant, $sort_column);
         //кол-во результатов
         $num = $result->rowCount();
 
-        //достаём tasks из базы
+        //достаём task'и из результирующей выборки
         $this->fetchAllData($num, $result);
 
         $this->view->render('main.tpl.php', 'base.tpl.php', $this->pageData);
 
-    }
-
-    public function sortByEmailWithLimit($sort_option)
-    {
-        //кол-во результатов
-        $num = $this->model->countOfTasks();
-        //кол-во страниц
-        $totalPages = ceil($num / $this->taskPerPage);
-
-        // определяем страницу & кол-во task'ов которое будет выведено
-        $pages = $this->makeTaskPager($num, $totalPages);
-        $limit = (int)$pages['limit'];
-        $offset = (int)$pages['offset'];
-
-        // получаем tasks sort by username ASC
-        $result = $this->model->sortByEmailWithLimit($limit, $offset, $sort_option);
-        //кол-во результатов
-        $num = $result->rowCount();
-
-        //достаём tasks из базы
-        $this->fetchAllData($num, $result);
-
-        $this->view->render('main.tpl.php', 'base.tpl.php', $this->pageData);
-    }
-
-    public function sortByStatusWithLimit($sort_option)
-    {
-        //кол-во результатов
-        $num = $this->model->countOfTasks();
-        //кол-во страниц
-        $totalPages = ceil($num / $this->taskPerPage);
-
-        // определяем страницу & кол-во task'ов которое будет выведено
-        $pages = $this->makeTaskPager($num, $totalPages);
-        $limit = (int)$pages['limit'];
-        $offset = (int)$pages['offset'];
-
-        // получаем tasks sort by username ASC
-        $result = $this->model->sortByStatusWithLimit($limit, $offset, $sort_option);
-        //кол-во результатов
-        $num = $result->rowCount();
-
-        //достаём tasks из базы
-        $this->fetchAllData($num, $result);
-
-        $this->view->render('main.tpl.php', 'base.tpl.php', $this->pageData);
     }
 
     //достаём task'и из результирующей выборки

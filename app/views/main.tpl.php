@@ -64,9 +64,9 @@
     <nav aria-label='Page navigation'>
         <ul class='pagination'>
             <li><a class="page-link" href='/main<?php echo "?" . http_build_query(array_merge($_GET, ['page' => 1])); ?>' aria-label='Previous'><span aria-hidden='true'>&laquo;</span> Начало</a></li>
-            <?php for($i=2; $i<=($pageData['limitPages']['totalPages'])-1; $i++) : ?>
+            <?php for($i=2; $i<=($pageData['totalPages'])-1; $i++) : ?>
                 <li><a class="page-link" href='/main<?php echo "?" . http_build_query(array_merge($_GET, ['page' => $i])); ?>'><?php echo $i; ?></a></li>
             <?php endfor; ?>
-            <li><a class="page-link" href='/main<?php echo "?" . http_build_query(array_merge($_GET, ['page' => ($pageData['limitPages']['totalPages'])])); ?>' aria-label='Next'>Конец <span aria-hidden='true'>&raquo;</span></a></li>
+            <li><a class="page-link" href='/main<?php echo "?" . http_build_query(array_merge($_GET, ['page' => ($pageData['totalPages'])])); ?>' aria-label='Next'>Конец <span aria-hidden='true'>&raquo;</span></a></li>
         </ul>
 
