@@ -12,7 +12,6 @@ class MainController extends Controller
         $this->model = new MainModel();
     }
 
-
     public function index()
     {
         //сортировка по дефолту
@@ -95,10 +94,8 @@ class MainController extends Controller
 
     public function sortByUsernameWithLimit($sort_option)
     {
-        // не самое лучшее решение , но пока оставлю чтоб выводить на кнопки сортировку
-        $allResult = $this->model->sortByNewest();
         //кол-во результатов
-        $num = $allResult->rowCount();
+        $num = $this->model->sortByNewest();
         //кол-во страниц
         $totalPages = ceil($num / $this->taskPerPage);
 
@@ -112,6 +109,62 @@ class MainController extends Controller
         //кол-во результатов
         $num = $result->rowCount();
 
+        //достаём tasks из базы
+        $this->fetchAllData($num, $result);
+
+        $this->view->render('main.tpl.php', 'base.tpl.php', $this->pageData);
+
+    }
+
+    public function sortByEmailWithLimit($sort_option)
+    {
+        //кол-во результатов
+        $num = $this->model->sortByNewest();
+        //кол-во страниц
+        $totalPages = ceil($num / $this->taskPerPage);
+
+        // определяем страницу & кол-во task'ов которое будет выведено
+        $pages = $this->makeTaskPager($num, $totalPages);
+        $limit = (int)$pages['limit'];
+        $offset = (int)$pages['offset'];
+
+        // получаем tasks sort by username ASC
+        $result = $this->model->sortByEmailWithLimit($limit, $offset, $sort_option);
+        //кол-во результатов
+        $num = $result->rowCount();
+
+        //достаём tasks из базы
+        $this->fetchAllData($num, $result);
+
+        $this->view->render('main.tpl.php', 'base.tpl.php', $this->pageData);
+    }
+
+    public function sortByStatusWithLimit($sort_option)
+    {
+        //кол-во результатов
+        $num = $this->model->sortByNewest();
+        //кол-во страниц
+        $totalPages = ceil($num / $this->taskPerPage);
+
+        // определяем страницу & кол-во task'ов которое будет выведено
+        $pages = $this->makeTaskPager($num, $totalPages);
+        $limit = (int)$pages['limit'];
+        $offset = (int)$pages['offset'];
+
+        // получаем tasks sort by username ASC
+        $result = $this->model->sortByStatusWithLimitASC($limit, $offset, $sort_option);
+        //кол-во результатов
+        $num = $result->rowCount();
+
+        //достаём tasks из базы
+        $this->fetchAllData($num, $result);
+
+        $this->view->render('main.tpl.php', 'base.tpl.php', $this->pageData);
+    }
+
+    //достаём tasks из результирующей выборки
+    public function fetchAllData($num, $result)
+    {
         //проверяем есть ли tasks
         if ($num > 0) {
             //массив тасков
@@ -136,98 +189,5 @@ class MainController extends Controller
             //нету task'ов
             echo 'Задачи не найдены';
         }
-        $this->view->render('main.tpl.php', 'base.tpl.php', $this->pageData);
-    }
-
-    public function sortByEmailWithLimit($sort_option)
-    {
-        // не самое лучшее решение , но пока оставлю чтоб выводить на кнопки сортировку
-        $allResult = $this->model->sortByNewest();
-        //кол-во результатов
-        $num = $allResult->rowCount();
-        //кол-во страниц
-        $totalPages = ceil($num / $this->taskPerPage);
-
-        // определяем страницу & кол-во task'ов которое будет выведено
-        $pages = $this->makeTaskPager($num, $totalPages);
-        $limit = (int)$pages['limit'];
-        $offset = (int)$pages['offset'];
-
-        // получаем tasks sort by username ASC
-        $result = $this->model->sortByEmailWithLimit($limit, $offset, $sort_option);
-        //кол-во результатов
-        $num = $result->rowCount();
-
-        //проверяем есть ли tasks
-        if ($num > 0) {
-            //массив тасков
-            $this->pageData['tasks_arr'] = array();
-
-            //перебериаем $result
-            while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-                extract($row);
-                $task_item = array(
-                    'login' => $login,
-                    'email' => $email,
-                    'body' => html_entity_decode($body),
-                    'task_id' => $id,
-                    'status' => $status,
-                    'updated' => $updated_at
-                );
-                //push'им в 'data'
-                array_push($this->pageData['tasks_arr'], $task_item);
-            }
-
-        } else {
-            //нету task'ов
-            echo 'Задачи не найдены';
-        }
-        $this->view->render('main.tpl.php', 'base.tpl.php', $this->pageData);
-    }
-
-    public function sortByStatusWithLimit($sort_option)
-    {
-        // не самое лучшее решение , но пока оставлю чтоб выводить на кнопки сортировку
-        $allResult = $this->model->sortByNewest();
-        //кол-во результатов
-        $num = $allResult->rowCount();
-        //кол-во страниц
-        $totalPages = ceil($num / $this->taskPerPage);
-
-        // определяем страницу & кол-во task'ов которое будет выведено
-        $pages = $this->makeTaskPager($num, $totalPages);
-        $limit = (int)$pages['limit'];
-        $offset = (int)$pages['offset'];
-
-        // получаем tasks sort by username ASC
-        $result = $this->model->sortByStatusWithLimitASC($limit, $offset, $sort_option);
-        //кол-во результатов
-        $num = $result->rowCount();
-
-        //проверяем есть ли tasks
-        if ($num > 0) {
-            //массив тасков
-            $this->pageData['tasks_arr'] = array();
-
-            //перебериаем $result
-            while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-                extract($row);
-                $task_item = array(
-                    'login' => $login,
-                    'email' => $email,
-                    'body' => html_entity_decode($body),
-                    'task_id' => $id,
-                    'status' => $status,
-                    'updated' => $updated_at
-                );
-                //push'им в 'data'
-                array_push($this->pageData['tasks_arr'], $task_item);
-            }
-
-        } else {
-            //нету task'ов
-            echo 'Задачи не найдены';
-        }
-        $this->view->render('main.tpl.php', 'base.tpl.php', $this->pageData);
     }
 }

@@ -20,9 +20,16 @@ class MainModel extends Model
         $stmt = $this->db->prepare($query);
 
         //запускаем запрос
-        $stmt->execute();
-
-        return $stmt;
+        $id = null;
+        if ($stmt->execute()) {
+            $num = $stmt->rowCount();
+            return $num;
+        }
+        else {
+            //error show
+            printf("Error: %s.\n", $stmt->error);
+            return false;
+        }
     }
 
     // получаем tasks sort by username with limit(pagination) ASC & DESC
