@@ -17,9 +17,9 @@ class MainController extends Controller
         //сортировка по дефолту
         $sort_option = 'ASC';
         $sort = array(
-            'sortByUser' => 'sortByUsernameWithLimitASC',
-            'sortByEmail' => 'sortByEmailWithLimitASC',
-            'sortByStatus' => 'sortByStatusWithLimitASC',
+            'sortByUser' => 'sortByUsernameASC',
+            'sortByEmail' => 'sortByEmailASC',
+            'sortByStatus' => 'sortByStatusASC',
         );
         $this->pageData['sortoption'] = $sort;
 
@@ -28,28 +28,28 @@ class MainController extends Controller
         } else {
             // меняем сортировку в кнопках & выводим отсортированные данные
             switch (isset($_GET['sort'])):
-                case $_GET['sort'] === 'sortByUsernameWithLimitASC':
-                    $this->pageData['sortoption']['sortByUser'] = 'sortByUsernameWithLimitDESC';
+                case $_GET['sort'] === 'sortByUsernameASC':
+                    $this->pageData['sortoption']['sortByUser'] = 'sortByUsernameDESC';
                     $this->sortByUsernameWithLimit($sort_option);
                     break;
-                case $_GET['sort'] === 'sortByUsernameWithLimitDESC':
-                    $this->pageData['sortoption']['sortByUser'] = 'sortByUsernameWithLimitASC';
+                case $_GET['sort'] === 'sortByUsernameDESC':
+                    $this->pageData['sortoption']['sortByUser'] = 'sortByUsernameASC';
                     $this->sortByUsernameWithLimit($sort_option = 'DESC');
                     break;
-                case $_GET['sort'] === 'sortByEmailWithLimitASC':
-                    $this->pageData['sortoption']['sortByEmail'] = 'sortByEmailWithLimitDESC';
+                case $_GET['sort'] === 'sortByEmailASC':
+                    $this->pageData['sortoption']['sortByEmail'] = 'sortByEmailDESC';
                     $this->sortByEmailWithLimit($sort_option);
                     break;
-                case $_GET['sort'] === 'sortByEmailWithLimitDESC':
-                    $this->pageData['sortoption']['sortByEmail'] = 'sortByEmailWithLimitASC';
+                case $_GET['sort'] === 'sortByEmailDESC':
+                    $this->pageData['sortoption']['sortByEmail'] = 'sortByEmailASC';
                     $this->sortByEmailWithLimit($sort_option = 'DESC');
                     break;
-                case $_GET['sort'] === 'sortByStatusWithLimitASC':
-                    $this->pageData['sortoption']['sortByStatus'] = 'sortByStatusWithLimitDESC';
+                case $_GET['sort'] === 'sortByStatusASC':
+                    $this->pageData['sortoption']['sortByStatus'] = 'sortByStatusDESC';
                     $this->sortByStatusWithLimit($sort_option);
                     break;
-                case $_GET['sort'] === 'sortByStatusWithLimitDESC':
-                    $this->pageData['sortoption']['sortByStatus'] = 'sortByStatusWithLimitASC';
+                case $_GET['sort'] === 'sortByStatusDESC':
+                    $this->pageData['sortoption']['sortByStatus'] = 'sortByStatusASC';
                     $this->sortByStatusWithLimit($sort_option = 'DESC');
                     break;
             endswitch;
@@ -95,7 +95,7 @@ class MainController extends Controller
     public function sortByUsernameWithLimit($sort_option)
     {
         //кол-во результатов
-        $num = $this->model->sortByNewest();
+        $num = $this->model->countOfTasks();
         //кол-во страниц
         $totalPages = ceil($num / $this->taskPerPage);
 
@@ -119,7 +119,7 @@ class MainController extends Controller
     public function sortByEmailWithLimit($sort_option)
     {
         //кол-во результатов
-        $num = $this->model->sortByNewest();
+        $num = $this->model->countOfTasks();
         //кол-во страниц
         $totalPages = ceil($num / $this->taskPerPage);
 
@@ -142,7 +142,7 @@ class MainController extends Controller
     public function sortByStatusWithLimit($sort_option)
     {
         //кол-во результатов
-        $num = $this->model->sortByNewest();
+        $num = $this->model->countOfTasks();
         //кол-во страниц
         $totalPages = ceil($num / $this->taskPerPage);
 
@@ -152,7 +152,7 @@ class MainController extends Controller
         $offset = (int)$pages['offset'];
 
         // получаем tasks sort by username ASC
-        $result = $this->model->sortByStatusWithLimitASC($limit, $offset, $sort_option);
+        $result = $this->model->sortByStatusWithLimit($limit, $offset, $sort_option);
         //кол-во результатов
         $num = $result->rowCount();
 
@@ -162,7 +162,7 @@ class MainController extends Controller
         $this->view->render('main.tpl.php', 'base.tpl.php', $this->pageData);
     }
 
-    //достаём tasks из результирующей выборки
+    //достаём task'и из результирующей выборки
     public function fetchAllData($num, $result)
     {
         //проверяем есть ли tasks

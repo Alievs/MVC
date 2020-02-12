@@ -9,7 +9,7 @@ class MainModel extends Model
 
 
     // получаем tasks
-    public function sortByNewest() {
+    public function countOfTasks() {
         //create query
         $query = 'SELECT u.id, u.login, u.email, t.body, t.status
                     FROM ' . $this->table . ' u
@@ -86,7 +86,7 @@ class MainModel extends Model
     }
 
     // получаем tasks sort by Status ASC & DESC
-    public function sortByStatusWithLimitASC($limit, $offset, $sort_option) {
+    public function sortByStatusWithLimit($limit, $offset, $sort_option) {
         //create query
         $query = 'SELECT u.login, u.email, t.body, t.status, t.id, t.updated_at
                     FROM ' . $this->table . ' u
