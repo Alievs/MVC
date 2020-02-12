@@ -4,7 +4,6 @@
 <!-- Page Content -->
 <div class="container">
 
-
         <?php $sortuserlink = "?" . http_build_query(array_merge($_GET, ['sort' => $pageData['sortoption']['sortByUser']]));
         $sortemaillink = "?" . http_build_query(array_merge($_GET, ['sort' => $pageData['sortoption']['sortByEmail']]));
         $sortstatuslink = "?" . http_build_query(array_merge($_GET, ['sort' => $pageData['sortoption']['sortByStatus']])); ?>

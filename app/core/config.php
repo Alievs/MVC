@@ -16,7 +16,6 @@ require_once CORE_PATH ."Route.php";
 require_once CORE_PATH ."Model.php";
 require_once CORE_PATH ."View.php";
 require_once CORE_PATH ."Controller.php";
-require_once UTILS ."Utils.php";
 require_once UTILS ."Security.php";
 
 Route::buildRoute();

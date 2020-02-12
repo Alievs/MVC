@@ -8,14 +8,13 @@ class MainModel extends Model
     private $table2 = 'tasks';
 
 
-    // получаем tasks sort by username ASC
+    // получаем tasks
     public function sortByNewest() {
         //create query
         $query = 'SELECT u.id, u.login, u.email, t.body, t.status
                     FROM ' . $this->table . ' u
                     LEFT JOIN '. $this->table2 .' t ON u.id = t.user_id
-                    WHERE t.body IS NOT NULL AND t.status IS NOT NULL
-                    ORDER BY u.login DESC';
+                    WHERE t.body IS NOT NULL AND t.status IS NOT NULL';
 
         //prepare statement
         $stmt = $this->db->prepare($query);
@@ -26,14 +25,14 @@ class MainModel extends Model
         return $stmt;
     }
 
-    // получаем tasks sort by username with limit(pagination) ASC
-    public function sortByUsernameWithLimitASC($limit, $offset) {
+    // получаем tasks sort by username with limit(pagination) ASC & DESC
+    public function sortByUsernameWithLimit($limit, $offset, $sort_option) {
         //create query
         $query = 'SELECT u.login, u.email, t.body, t.status, t.id, t.updated_at
                     FROM ' . $this->table . ' u
                     LEFT JOIN '. $this->table2 .' t ON u.id = t.user_id
                     WHERE t.body IS NOT NULL AND t.status IS NOT NULL
-                    ORDER BY u.login ASC , t.id ASC
+                    ORDER BY u.login '. $sort_option .', t.id '. $sort_option .'
                     LIMIT :limit, :offset';
 
         //prepare statement
@@ -53,14 +52,14 @@ class MainModel extends Model
         return false;
     }
 
-    // получаем tasks sort by username DESC
-    public function sortByUsernameWithLimitDESC($limit, $offset) {
+    // получаем tasks sort by Email ASC & DESC
+    public function sortByEmailWithLimit($limit, $offset, $sort_option) {
         //create query
         $query = 'SELECT u.login, u.email, t.body, t.status, t.id, t.updated_at
                     FROM ' . $this->table . ' u
                     LEFT JOIN '. $this->table2 .' t ON u.id = t.user_id
                     WHERE t.body IS NOT NULL AND t.status IS NOT NULL
-                    ORDER BY u.login DESC , t.id DESC
+                    ORDER BY u.email '. $sort_option .', t.id '. $sort_option .'
                     LIMIT :limit, :offset';
 
         //prepare statement
@@ -79,92 +78,14 @@ class MainModel extends Model
         return false;
     }
 
-    // получаем tasks sort by Email ASC
-    public function sortByEmailWithLimitASC($limit, $offset) {
+    // получаем tasks sort by Status ASC & DESC
+    public function sortByStatusWithLimitASC($limit, $offset, $sort_option) {
         //create query
         $query = 'SELECT u.login, u.email, t.body, t.status, t.id, t.updated_at
                     FROM ' . $this->table . ' u
                     LEFT JOIN '. $this->table2 .' t ON u.id = t.user_id
                     WHERE t.body IS NOT NULL AND t.status IS NOT NULL
-                    ORDER BY u.email ASC, t.id ASC
-                    LIMIT :limit, :offset';
-
-        //prepare statement
-        $stmt = $this->db->prepare($query);
-
-        //подставляем данные
-        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
-        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
-
-        //запускаем запрос
-        if ($stmt->execute()) {
-            return $stmt;
-        }
-        //error show
-        printf("Error: %s.\n", $stmt->error);
-        return false;
-    }
-
-    // получаем tasks sort by Email DESC
-    public function sortByEmailWithLimitDESC($limit, $offset) {
-        //create query
-        $query = 'SELECT u.login, u.email, t.body, t.status, t.id, t.updated_at
-                    FROM ' . $this->table . ' u
-                    LEFT JOIN '. $this->table2 .' t ON u.id = t.user_id
-                    WHERE t.body IS NOT NULL AND t.status IS NOT NULL
-                    ORDER BY u.email DESC, t.id DESC
-                    LIMIT :limit, :offset';
-
-        //prepare statement
-        $stmt = $this->db->prepare($query);
-
-        //подставляем данные
-        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
-        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
-
-        //запускаем запрос
-        if ($stmt->execute()) {
-            return $stmt;
-        }
-        //error show
-        printf("Error: %s.\n", $stmt->error);
-        return false;
-    }
-
-    // получаем tasks sort by Status ASC
-    public function sortByStatusWithLimitASC($limit, $offset) {
-        //create query
-        $query = 'SELECT u.login, u.email, t.body, t.status, t.id, t.updated_at
-                    FROM ' . $this->table . ' u
-                    LEFT JOIN '. $this->table2 .' t ON u.id = t.user_id
-                    WHERE t.body IS NOT NULL AND t.status IS NOT NULL
-                    ORDER BY t.status ASC, t.id DESC 
-                    LIMIT :limit, :offset';
-
-        //prepare statement
-        $stmt = $this->db->prepare($query);
-
-        //подставляем данные
-        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
-        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
-
-        //запускаем запрос
-        if ($stmt->execute()) {
-            return $stmt;
-        }
-        //error show
-        printf("Error: %s.\n", $stmt->error);
-        return false;
-    }
-
-    // получаем tasks sort by Status DESC
-    public function sortByStatusWithLimitDESC($limit, $offset) {
-        //create query
-        $query = 'SELECT u.login, u.email, t.body, t.status, t.id, t.updated_at
-                    FROM ' . $this->table . ' u
-                    LEFT JOIN '. $this->table2 .' t ON u.id = t.user_id
-                    WHERE t.body IS NOT NULL AND t.status IS NOT NULL
-                    ORDER BY t.status DESC, t.id DESC
+                    ORDER BY t.status '. $sort_option .', t.id '. $sort_option .' 
                     LIMIT :limit, :offset';
 
         //prepare statement
