@@ -69,6 +69,7 @@ class UpdateController extends Controller
 
     public function updateTask()
     {
+
         //проверяем права доступа
         $this->security->securityChecker();
 
@@ -99,6 +100,8 @@ class UpdateController extends Controller
             //тело задчи без изменений
             $this->model->updateWithOutBody($id, $status);
         }
+
+        header('Location:/');
 
     }
 

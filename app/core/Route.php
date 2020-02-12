@@ -12,7 +12,7 @@ class Route
         //parse url (only part of url)
         $route = explode('/', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
 
-        //checks url from the end
+        //checks url
         $i = count($route)-1;
 
         while($i > 0) {

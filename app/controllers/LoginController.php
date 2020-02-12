@@ -53,8 +53,8 @@ class LoginController extends Controller
 
     public function logout()
     {
-        session_destroy();
         unset($_SESSION['admin']);
+        session_destroy();
         header('Location:/');
 
     }
